@@ -22,6 +22,8 @@ import javax.ws.rs.core.Response
 @Slf4j
 class WebRatesResource {
 
+    private final String NEW_LINE = System.getProperty('line.separator')
+
     @Autowired
     private Repository repository
 
@@ -73,13 +75,18 @@ class WebRatesResource {
         file.withWriter { writer ->
             rates.eachWithIndex { Map rate, idx ->
                 if (idx == 0) {
-                    writer.write(rate.keySet().join(separator))
-                    writer.write('\n')
+                    def header = rate.keySet()
+                    write(writer, header, separator)
                 }
-                writer.write(rate.values().join(separator))
-                writer.write('\n')
+                def data = rate.values()
+                write(writer, data, separator)
             }
         }
         file
+    }
+
+    private def write(writer, row, separator) {
+        writer.write(row.join(separator))
+        writer.write(NEW_LINE)
     }
 }
