@@ -14,23 +14,21 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON
 @Slf4j
 class ApplicationExceptionMapper implements ExceptionMapper<Throwable> {
 
-    private final map = [
-            "${NotFoundException.getClass().name}": Response.status(404)
-    ].withDefault {
+    private final exRespBuilders = [:].withDefault {
         Response.serverError()
     }
 
     @Override
     Response toResponse(Throwable exception) {
         log.error("Exception : ", exception)
-        Response.ResponseBuilder responseBuilder = map[exception.getClass().name]
+        Response.ResponseBuilder erb = exRespBuilders[exception.getClass().name]
         def message = exception.message
         def entity = new JsonBuilder()
         entity {
             failure message
         }
 
-        responseBuilder.header(CONTENT_TYPE, APPLICATION_JSON)
+        erb.header(CONTENT_TYPE, APPLICATION_JSON)
                 .entity(entity.content)
                 .build()
     }

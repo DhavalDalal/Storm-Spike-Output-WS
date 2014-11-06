@@ -29,13 +29,16 @@
 <h2>Rest Endpoints</h2>
 <table class="table table-responsive table-bordered text-left">
     <tr>
-        <td>/rest/webrates/ping</td><td>Check availability of this resource</td>
+        <td>/api/webrates/health</td><td>Health check of this resource</td>
     </tr>
     <tr>
-        <td>/rest/webrates</td><td>Get webrates for all properties</td>
+        <td>/api/webrates</td><td>Get webrates for all properties</td>
     </tr>
     <tr>
-        <td>/rest/webrates/{propertyCode}</td><td>Get webrates for a property</td>
+        <td>/api/webrates/{propertyCode}</td><td>Get webrates for a property</td>
+    </tr>
+    <tr>
+        <td>/api/webrates/{propertyCode}?format=csv</td><td>Download webrates for a property as csv</td>
     </tr>
 </table>
 </div>
