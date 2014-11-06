@@ -85,7 +85,7 @@ class WebRatesResource {
         file
     }
 
-    private def write(writer, List row, String separator) {
+    private def write(writer, row, String separator) {
         writer.write(row.join(separator))
         writer.write(NEW_LINE)
     }
