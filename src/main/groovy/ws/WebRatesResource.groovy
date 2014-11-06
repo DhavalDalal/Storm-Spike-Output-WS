@@ -70,7 +70,7 @@ class WebRatesResource {
         }
     }
 
-    private File writeTo(String filename, rates, separator) {
+    private File writeTo(String filename, List<Map> rates, String separator) {
         File file = new File(filename)
         file.withWriter { writer ->
             rates.eachWithIndex { Map rate, idx ->
@@ -85,7 +85,7 @@ class WebRatesResource {
         file
     }
 
-    private def write(writer, row, separator) {
+    private def write(writer, List row, String separator) {
         writer.write(row.join(separator))
         writer.write(NEW_LINE)
     }
