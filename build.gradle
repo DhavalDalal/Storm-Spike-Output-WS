@@ -1,0 +1,72 @@
+apply plugin: 'java'
+apply plugin: 'groovy'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'war'
+apply plugin: 'jetty'
+apply from: 'https://raw.github.com/DhavalDalal/gradle-plugins/master/jersey-plugin.gradle'
+
+defaultTasks 'clean', 'build'
+
+sourceCompatibility = '1.7'
+targetCompatibility = '1.7'
+
+project.ext {
+    //libs
+    jerseyBundle = 'org.glassfish.jersey.bundles:jaxrs-ri:2.13'
+    groovy = 'org.codehaus.groovy:groovy-all:2.0.5'
+    commonsCli = 'commons-cli:commons-cli:1.1'
+    log4j = 'log4j:log4j:1.2.17'
+    jerseySpring = 'org.glassfish.jersey.ext:jersey-spring3:2.13'
+    mongo = 'org.mongodb:mongo-java-driver:2.11.4'
+    jacksonJaxRSProvider = 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.2.3'
+//    genson = 'com.owlike:genson:0.99'
+
+    //test-libs
+    junit = 'junit:junit:4.8.1'
+    hamcrest = 'org.hamcrest:hamcrest-all:1.3'
+    spock = 'org.spockframework:spock-core:0.7-groovy-2.0'
+
+    //webapp config
+    webInfDir = 'WEB-INF'
+    webXml = file("$webInfDir/web.xml")
+    webappSrcDir = 'src/main/webapp'
+}
+
+repositories {
+    jcenter()
+    maven {
+        url 'http://code.google.com/p/google-maven-repository'
+    }
+}
+
+dependencies {
+    compile(project.ext.jerseyBundle, project.ext.jerseySpring, project.ext.groovy,
+            project.ext.mongo, project.ext.jacksonJaxRSProvider,
+            project.ext.commonsCli, project.ext.log4j)
+    testCompile(project.ext.hamcrest, project.ext.junit, project.ext.spock)
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.12'
+}
+
+war {
+    webXml = project.ext.webXml // copies a file to WEB-INF/web.xml
+}
+
+jersey {
+    packages = 'ws'
+    servletName = 'Storm-spike Servlet'
+    urlPattern = '/rest/*'
+    servletContainerPackage = 'jersey.config.server.provider.packages'
+    servletContainerClass = 'org.glassfish.jersey.servlet.ServletContainer'
+}
+
+jettyRun {
+    contextPath = ''
+    httpPort = 9090
+    reload = 'automatic'
+    scanIntervalSeconds = 1
+    webAppSourceDirectory = file(project.ext.webappSrcDir)
+}
