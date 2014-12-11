@@ -38,7 +38,11 @@ class WebRatesResource {
     @Path('/health')
     @Produces(MediaType.APPLICATION_JSON)
     public String ping() {
-        "{greet: 'hello from webrate resource'}"
+        """
+         |{
+         |  "health": "${getClass().simpleName} Says I'm OK!"
+         |}
+        """.stripMargin()
     }
 
     @GET
