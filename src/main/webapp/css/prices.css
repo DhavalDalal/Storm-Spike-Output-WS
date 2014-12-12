@@ -1,0 +1,50 @@
+.widget-cell {
+	/*height:25px;*/
+	width:180px;
+	vertical-align: top;
+	/*font-family: Verdana,Arial,sans-serif;*/
+	font-size: x-large;
+	font-weight: normal;
+	border: 0px;
+	float: left;
+	margin-left: 1px;
+}
+
+.widget-header {
+	/*height:30px;*/
+	width:180px;
+    /*width: 50%;*/
+	text-align: center;
+	vertical-align:bottom;
+	/*font-family: Verdana,Arial,sans-serif;*/
+	font-size: x-large;
+	font-weight: normal;
+	float: left;
+}
+
+.status {
+	text-align: right;
+	font-size:xx-small;
+	border: 0px;
+}
+
+.price-row-placeholder {
+	height: 25px;
+	width: 365px;
+	border: #cdc3b7 1px dashed;
+}
+
+.prices-ui {
+	border: 1px solid #cdc3b7;
+	margin-left: 2px;
+	width:362px;
+	height:132px;
+}
+
+.green {
+    color: green;
+}
+
+.red {
+    color: red;
+}

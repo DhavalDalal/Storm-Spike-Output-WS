@@ -12,6 +12,7 @@ import javax.jms.Message
 import javax.jms.MessageConsumer
 import javax.jms.MessageListener
 import javax.jms.Session
+import javax.jms.TextMessage
 
 @Slf4j
 class BarWebSocketServer extends WebSocketServer implements MessageListener {
@@ -62,6 +63,7 @@ class BarWebSocketServer extends WebSocketServer implements MessageListener {
     }
 
     void push(String message) {
+        println "Pushing $message to all WebSocket Connections..."
         connections.each { connection ->
             connection.send(message)
         }
@@ -70,6 +72,12 @@ class BarWebSocketServer extends WebSocketServer implements MessageListener {
     @Override
     public void onMessage(Message message) {
         log.info("Received message $message")
-        push(message.toString())
+        if(message instanceof TextMessage) {
+            def textMessage = message as TextMessage
+            push(textMessage.text)
+            message.acknowledge()
+        } else {
+            log.info("Cannot Deliver Non-Text Message: $message")
+        }
     }
 }

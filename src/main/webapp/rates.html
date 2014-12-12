@@ -7,11 +7,80 @@
     <link rel="stylesheet" href="lib/bootstrap/3.1.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="lib/bootstrap/3.1.1/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="lib/bootstrap/3.1.1/css/bootstrap-responsive.css">
-
     <link href="css/jumbotron-narrow.css" rel="stylesheet">
+    <!--<link rel="stylesheet" href="css/jquery-ui.min.css" />-->
+    <link rel="stylesheet" href="css/jquery-ui.structure.min.css" />
+    <link rel="stylesheet" href="css/jquery-ui.theme.min.css" />
+    <link rel="stylesheet" href="css/prices.css" />
 
     <script src="lib/jQuery/1.11.0/jquery-1.11.0.js"></script>
     <script src="lib/bootstrap/3.1.1/js/bootstrap.js"></script>
+    <script type="text/javascript" src="lib/jQuery-ui/1.11.2/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="lib/json/json2.js"></script>
+    <script type="text/javascript" src="lib/web-socket-js/swfobject.js"></script>
+    <script type="text/javascript" src="lib/web-socket-js/web_socket_min.js"></script>
+    <script type="text/javascript" src="lib/knockout/3.2.0/knockout.min.js"></script>
+    <script type="text/javascript" src="client/src/stream/PriceViewModel.js"></script>
+    <script type="text/javascript" src="client/src/stream/PricesViewModel.js"></script>
+    <script type="text/javascript" >
+
+        WEB_SOCKET_SWF_LOCATION = "lib/web-socket-js/WebSocketMain.swf";
+        // Set this to dump debug message from Flash to console.log:
+        WEB_SOCKET_DEBUG = true;
+
+        var url = 'ws://localhost:9080';
+        var server = new WebSocket(url);
+        //Called when connection is established
+        server.onopen = function(openMessage) {
+            console.info("Opened Connection = ", openMessage);
+        };
+
+        //Called when connection is closed
+        server.onclose = function(closeMessage) {
+            console.info("Closed Connection = ", closeMessage);
+        };
+
+        //Called when error occurs
+        server.onerror = function(error) {
+            console.info("Error = ", error);
+        };
+
+        //Called when message is received from server
+        server.onmessage = function(message) {
+            console.info("Message = ", message);
+			updatePrice(message.data);
+        };
+
+        function subscribe() {
+            server.send("subscribe");
+        };
+
+        function unsubscribe() {
+            server.send("unsubscribe");
+        };
+
+        function updatePrice(message) {
+            var price = JSON.parse(message);
+            console.info("Parsed Message = ", price);
+            pricesViewModel.addOrUpdatePrice(price);
+        };
+
+        var pricesViewModel = new PricesViewModel();
+    </script>
+    <script type="text/javascript" >
+        $(document).ready(function() {
+            $("button").button();
+            $( "#sortable" ).sortable({
+                cursor: 'move',
+                forceHelperSize: true,
+                forcePlaceholderSize: true,
+                placeholder: 'price-row-placeholder',
+                opacity: 0.6,
+                cursorAt: { left: 1 }
+            });
+        });
+    </script>
+
 </head>
 
 <body>
@@ -25,7 +94,35 @@
 </div>
 
 <div id="main" class="jumbotron">
-    Show stream here
+    <div>
+        <button onclick="subscribe();">Start Updates</button>
+        <button onclick="unsubscribe();">Stop Updates</button>
+    </div>
+    <div class="prices-ui">
+        <!-- header -->
+        <div>
+            <div class="ui-widget-header widget-header">Id</div>
+            <div class="ui-widget-header widget-header">Price</div>
+        </div>
+        <!-- price row template -->
+        <script type="text/html" id="pricesTemplate">
+            <div align="center">
+                <div class="ui-widget-content widget-cell" data-bind="text: id"></div>
+                <div class="ui-widget-content widget-cell">
+                    <div>
+                        <div style="float: left" data-bind="text: rate"></div>
+                        <div style="float: left" data-bind="attr: {'class': changeDirectionClass}"></div>
+                    </div>
+                </div>
+            </div>
+        </script>
+        <!-- prices rows holder -->
+        <div id="sortable" data-bind="template: { name: 'pricesTemplate', foreach: prices }">
+        </div>
+    </div>
+    <script type="text/javascript">
+            ko.applyBindings(pricesViewModel);
+    </script>
 </div>
 <div class="footer">
     <p>&copy; Storm Spike Output 2014</p>
